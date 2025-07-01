@@ -1,6 +1,6 @@
 <?php
 
-namespace App\External;
+namespace App\External\Models\Relations;
 
 use App\Enums\ServiceEnum;
 use App\Models\External;

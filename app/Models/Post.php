@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use App\Enums\ServiceEnum;
-use App\External\ExternalRelation;
-use App\External\HasExternalRelations;
+use App\External\Models\Relations\ExternalRelation;
+use App\External\Traits\HasExternalRelations;
 use Database\Factories\PostFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

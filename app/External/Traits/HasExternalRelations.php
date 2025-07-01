@@ -1,8 +1,9 @@
 <?php
 
-namespace App\External;
+namespace App\External\Traits;
 
 use App\Enums\ServiceEnum;
+use App\External\Models\Relations\ExternalRelation;
 
 trait HasExternalRelations
 {
