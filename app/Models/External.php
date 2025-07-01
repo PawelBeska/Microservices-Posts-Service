@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Database\Factories\PostFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * @property int $id
@@ -22,6 +24,28 @@ class External extends Model
 
     protected $guarded = ['id'];
 
+    public static function resolveOrCreate(string|int $externalId, array $service): int
+    {
+        return Cache::remember(
+            sprintf('external:%s:%s', $service['name'], $externalId),
+            now()->addMonth(),
+            static fn() => static::query()->where('external_id', $externalId)
+                ->whereHas('service', fn(Builder $query) => $query->where('name', $service['name']))
+                ->firstOrCreate(
+                    [
+                        'external_id' => $externalId
+                    ],
+                    [
+                        'service_id' => Service::query()->firstOrCreate(
+                            [
+                                'name' => $service['name'],
+                            ],
+                            $service
+                        )->id
+                    ]
+                )->id
+        );
+    }
 
     public function service(): BelongsTo
     {

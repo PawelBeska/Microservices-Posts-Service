@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @property int $id
  * @property ServiceEnum $service
+ * @property string $name
  * @property string $host
  * @property int $port
  * @property bool $is_active
@@ -28,7 +29,6 @@ class Service extends Model
     public $guarded = ['id'];
 
     protected $casts = [
-        'host' => 'string',
         'port' => 'integer',
         'is_active' => 'boolean',
     ];

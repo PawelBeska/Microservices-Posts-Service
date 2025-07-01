@@ -16,6 +16,7 @@ class ServiceFactory extends Factory
         return [
             'service' => $this->faker->randomElement(ServiceEnum::cases()),
             'host' => $this->faker->domainName(),
+            'name' => $this->faker->word(),
             'port' => $this->faker->numberBetween(1, 65535),
             'is_active' => $this->faker->boolean()
         ];

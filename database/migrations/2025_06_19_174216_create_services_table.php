@@ -10,6 +10,7 @@ return new class extends Migration {
         Schema::create('services', static function (Blueprint $table) {
             $table->id();
             $table->string('service')->index();
+            $table->string('name')->index();
             $table->string('host');
             $table->unsignedBigInteger('port');
             $table->boolean('is_active')->default(true);

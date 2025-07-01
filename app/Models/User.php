@@ -12,7 +12,7 @@ class User extends Authenticatable
 
     protected $casts = [
         'permissions' => 'collection',
-        'roles' => 'collection',
+        'roles' => 'collection'
     ];
 
     public static function make(array $attributes): static
