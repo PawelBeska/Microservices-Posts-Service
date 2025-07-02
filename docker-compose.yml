@@ -30,7 +30,7 @@ services:
       - pgsql
       - redis
   pgsql:
-    image: 'postgres:17'
+    image: 'postgis/postgis:latest'
     container_name: posts-db
     ports:
       - '${FORWARD_DB_PORT:-15432}:5432'

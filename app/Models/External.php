@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Database\Factories\PostFactory;
+use Database\Factories\ExternalFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Cache;
  * @property int $service_id
  * @property string $external_id
  * @property Service $service
- * @method static PostFactory factory(int $count = 1)
+ * @method static ExternalFactory factory(int $count = 1)
  */
 class External extends Model
 {
