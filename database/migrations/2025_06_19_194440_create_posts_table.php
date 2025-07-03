@@ -1,21 +1,12 @@
 <?php
 
-use App\Enums\PostServiceTypeEnum;
-use Illuminate\Database\Grammar;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up(): void
     {
-        $enumValues = collect(PostServiceTypeEnum::all())->map(fn($type) => "'".str_replace("'", "''", $type)."'")->implode(',');
-
-        Grammar::macro('typePostServiceTypeEnum', fn() => 'postServiceTypeEnum');
-
-        DB::raw("CREATE TYPE postServiceTypeEnum AS ENUM ($enumValues);");
-
         Schema::create('posts', static function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')

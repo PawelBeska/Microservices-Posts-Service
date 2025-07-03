@@ -17,26 +17,28 @@ class SavePostAction
         $post->fill($data->except('images')->toArray())
             ->save();
 
-        // Media to delete
-        $idsToDelete = $data->images->whereNotNull('id')->where('delete', true)->pluck('id');
-        $mediaToDelete = $post->media()->whereIn('id', $idsToDelete)->get();
+        if ($data->images?->isNotEmpty()) {
+            // Media to delete
+            $idsToDelete = $data->images->whereNotNull('id')->where('delete', true)->pluck('id');
+            $mediaToDelete = $post->media()->whereIn('id', $idsToDelete)->get();
 
-        $mediaToDelete->each(function (PostMedia $media) {
-            $media->delete();
-        });
+            $mediaToDelete->each(function (PostMedia $media) {
+                $media->delete();
+            });
 
-        // Media to reorder
-        $data->images
-            ->whereNotNull('id')
-            ->where('delete', false)
-            ->each(fn(PostMediaData $media) => $post->media()->where('id', $media->id)->update([
-                'order' => $media->order
-            ]));
+            // Media to reorder
+            $data->images
+                ->whereNotNull('id')
+                ->where('delete', false)
+                ->each(fn(PostMediaData $media) => $post->media()->where('id', $media->id)->update([
+                    'order' => $media->order
+                ]));
 
-        // Media to create
-        $data->images
-            ->whereNull('id')
-            ->each(fn(PostMediaData $data) => SavePostMediaAction::run($post, $data));
+            // Media to create
+            $data->images
+                ->whereNull('id')
+                ->each(fn(PostMediaData $data) => SavePostMediaAction::run($post, $data));
+        }
 
         return $post;
     }

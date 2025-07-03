@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Database\Grammar;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +20,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Grammar::macro('typePostServiceTypeEnum', fn() => 'post_service_type_enum');
     }
 }

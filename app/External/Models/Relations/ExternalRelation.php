@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use Throwable;
 
 class ExternalRelation extends Relation
 {
@@ -62,28 +63,33 @@ class ExternalRelation extends Relation
             return [$item->external_id => sprintf('external_prefetch:%s', $item->id)];
         })->filter(fn(string|int $value, string|int $key): bool => Cache::missing($value))->toArray();
 
-        $response = Http::timeout(30)->post($url, [
-            'ids' => array_keys($notCachedData),
-        ]);
+        try {
+            $response = Http::timeout(30)->post($url, [
+                'ids' => array_keys($notCachedData),
+            ]);
 
-        if ($response->successful()) {
-            $results = $response->collect('data');
+            if ($response->successful()) {
+                $results = $response->collect('data');
 
-            Cache::putMany(
-                $results->mapWithKeys(function ($result) use ($data) {
-                    if ($key = $data->where('external_id', $result['id'])->first()?->id) {
-                        return [
-                            sprintf(
-                                'external_prefetch:%s',
-                                $key,
-                            ) => $result
-                        ];
-                    }
+                Cache::putMany(
+                    $results->mapWithKeys(function ($result) use ($data) {
+                        if ($key = $data->where('external_id', $result['id'])->first()?->id) {
+                            return [
+                                sprintf(
+                                    'external_prefetch:%s',
+                                    $key,
+                                ) => $result
+                            ];
+                        }
 
-                    return [];
-                })->filter()->toArray(),
-                300
-            );
+                        return [];
+                    })->filter()->toArray(),
+                    300
+                );
+            }
+        } catch (Throwable $exception) {
+            #!TODO - Handle the exception properly, maybe log it or notify the user
+            ds($exception);
         }
     }
 
@@ -114,8 +120,6 @@ class ExternalRelation extends Relation
 
         return $models;
     }
-
-    // Override dla query builder methods
 
     public function getResults()
     {

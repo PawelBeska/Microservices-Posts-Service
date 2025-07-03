@@ -10,11 +10,14 @@ use App\Events\PostDeleted;
 use App\Events\PostUpdated;
 use App\External\Models\Relations\ExternalRelation;
 use App\External\Traits\HasExternalRelations;
+use App\Interfaces\Repositories\PostRepositoryInterface;
 use Carbon\Carbon;
 use Clickbar\Magellan\Data\Geometries\Point;
 use Database\Factories\PostFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection as SupportCollection;
 use Spatie\LaravelData\DataCollection;
@@ -50,6 +53,9 @@ use Spatie\LaravelData\DataCollection;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @method static PostFactory factory(int $count = 1)
+ * @property-read Category $category
+ * @property-read Collection $media
+ * @property-read External $externalUser
  *
  */
 class Post extends Model
@@ -58,6 +64,8 @@ class Post extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+
+    protected $with = ['externalUser'];
 
     protected $casts = [
         'service_type' => PostServiceTypeEnum::class,
@@ -77,8 +85,26 @@ class Post extends Model
         return $this->external(ServiceEnum::USERS, 'user_id', 'users');
     }
 
+    public function externalUser(): BelongsTo
+    {
+        return $this->belongsTo(External::class, 'user_id');
+    }
+
     public function media(): HasMany
     {
         return $this->hasMany(PostMedia::class);
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
+
+    public function resolveRouteBinding(mixed $value, mixed $field = null)
+    {
+        return app(PostRepositoryInterface::class)
+            ->getBaseQuery()
+            ->where($field ?? 'id', $value)
+            ->firstOrFail();
     }
 }

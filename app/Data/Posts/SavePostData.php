@@ -38,18 +38,18 @@ class SavePostData extends Data
         #[WithCast(MagellanPointCast::class)]
         public Point $deliveryLocation,
         #[DataCollectionOf(PostMediaData::class)]
-        public Collection $images,
+        public ?Collection $images = null,
         public ?string $pickupPostalCode = null,
         public ?string $pickupAddress = null,
         public ?string $deliveryPostalCode = null,
         public ?string $deliveryAddress = null,
-        #[WithCast(DateTimeInterfaceCast::class)]
+        #[WithCast(DateTimeInterfaceCast::class, 'Y-m-d\TH:i:s.u\Z')]
         public ?Carbon $pickupDateFrom = null,
-        #[WithCast(DateTimeInterfaceCast::class)]
+        #[WithCast(DateTimeInterfaceCast::class, 'Y-m-d\TH:i:s.u\Z')]
         public ?Carbon $pickupDateTo = null,
-        #[WithCast(DateTimeInterfaceCast::class)]
+        #[WithCast(DateTimeInterfaceCast::class, 'Y-m-d\TH:i:s.u\Z')]
         public ?Carbon $deliveryDateFrom = null,
-        #[WithCast(DateTimeInterfaceCast::class)]
+        #[WithCast(DateTimeInterfaceCast::class, 'Y-m-d\TH:i:s.u\Z')]
         public ?Carbon $deliveryDateTo = null,
         public ?int $pickupFloor = null,
         public ?bool $pickupElevator = null,
@@ -88,10 +88,10 @@ class SavePostData extends Data
             'delivery_location' => ['required', 'array'],
             'delivery_location.latitude' => ['required', 'numeric'],
             'delivery_location.longitude' => ['required', 'numeric'],
-            'pickup_date_from' => ['nullable', 'date_format:Y-m-d H:i:s'],
-            'pickup_date_to' => ['nullable', 'date_format:Y-m-d H:i:s'],
-            'delivery_date_from' => ['nullable', 'date_format:Y-m-d H:i:s'],
-            'delivery_date_to' => ['nullable', 'date_format:Y-m-d H:i:s'],
+            'pickup_date_from' => ['nullable'],
+            'pickup_date_to' => ['nullable'],
+            'delivery_date_from' => ['nullable'],
+            'delivery_date_to' => ['nullable'],
             'cargo' => ['required', 'array', 'max:100'],
             'service_type' => ['required', 'string', new Enum(PostServiceTypeEnum::class)],
             'pickup_floor' => ['nullable', 'integer', 'min:0'],

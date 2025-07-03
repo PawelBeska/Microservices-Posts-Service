@@ -3,6 +3,8 @@
 namespace Tests;
 
 use App\Enums\ServiceEnum;
+use App\Models\External;
+use App\Models\Service;
 use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -13,10 +15,15 @@ abstract class TestCase extends BaseTestCase
     use WithFaker;
 
     protected Authenticatable|User $user;
+    protected External $externalUser;
 
     public function setUp(): void
     {
         parent::setUp();
+
+        Service::factory()
+            ->withService(ServiceEnum::USERS)
+            ->create();
 
         $this->user = User::make(
             [
@@ -34,5 +41,9 @@ abstract class TestCase extends BaseTestCase
 
             ]
         );
+
+        $this->externalUser = External::factory()
+            ->withService(ServiceEnum::USERS)
+            ->create();
     }
 }
