@@ -14,6 +14,9 @@ class SaveElasticsearchRecordListener implements ShouldQueueAfterCommit
 
     public function handle(SaveElasticsearchEventInterface $event): void
     {
+        $record = $event->getRecord();
+
+        $record->elasticSearchModel()->save();
     }
 
     public function backoff(): array

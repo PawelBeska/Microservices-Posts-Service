@@ -188,7 +188,9 @@ return [
         Watchers\QueryWatcher::class => [
             'enabled' => env('TELESCOPE_QUERY_WATCHER', true),
             'ignore_packages' => true,
-            'ignore_paths' => [],
+            'ignore_paths' => [
+                'ElasticSearch',
+            ],
             'slow' => 100,
         ],
 

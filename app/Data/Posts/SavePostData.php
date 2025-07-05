@@ -43,13 +43,13 @@ class SavePostData extends Data
         public ?string $pickupAddress = null,
         public ?string $deliveryPostalCode = null,
         public ?string $deliveryAddress = null,
-        #[WithCast(DateTimeInterfaceCast::class, 'Y-m-d\TH:i:s.u\Z')]
+        #[WithCast(DateTimeInterfaceCast::class, 'Y-m-d H:i:s P')]
         public ?Carbon $pickupDateFrom = null,
-        #[WithCast(DateTimeInterfaceCast::class, 'Y-m-d\TH:i:s.u\Z')]
+        #[WithCast(DateTimeInterfaceCast::class, 'Y-m-d H:i:s P')]
         public ?Carbon $pickupDateTo = null,
-        #[WithCast(DateTimeInterfaceCast::class, 'Y-m-d\TH:i:s.u\Z')]
+        #[WithCast(DateTimeInterfaceCast::class, 'Y-m-d H:i:s P')]
         public ?Carbon $deliveryDateFrom = null,
-        #[WithCast(DateTimeInterfaceCast::class, 'Y-m-d\TH:i:s.u\Z')]
+        #[WithCast(DateTimeInterfaceCast::class, 'Y-m-d H:i:s P')]
         public ?Carbon $deliveryDateTo = null,
         public ?int $pickupFloor = null,
         public ?bool $pickupElevator = null,
@@ -62,7 +62,11 @@ class SavePostData extends Data
         /** @var \App\Models\User $user */
         $user = auth()->user();
 
+        ds('SavePostData', 'user', $user);
+
         $this->userId = External::resolveOrCreate($user->id, $user->service);
+
+        ds($this->userId);
     }
 
     public static function rules(): array

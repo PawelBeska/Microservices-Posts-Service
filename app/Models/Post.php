@@ -10,6 +10,7 @@ use App\Events\PostDeleted;
 use App\Events\PostUpdated;
 use App\External\Models\Relations\ExternalRelation;
 use App\External\Traits\HasExternalRelations;
+use App\Interfaces\Models\HasElasticSearchIndexInterface;
 use App\Interfaces\Repositories\PostRepositoryInterface;
 use Carbon\Carbon;
 use Clickbar\Magellan\Data\Geometries\Point;
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection as SupportCollection;
+use PDPhilip\Elasticsearch\Eloquent\Model as ElasticSearchModel;
 use Spatie\LaravelData\DataCollection;
 
 /**
@@ -58,7 +60,7 @@ use Spatie\LaravelData\DataCollection;
  * @property-read External $externalUser
  *
  */
-class Post extends Model
+class Post extends Model implements HasElasticSearchIndexInterface
 {
     use HasExternalRelations;
     use HasFactory;
@@ -72,13 +74,25 @@ class Post extends Model
         'pickup_location' => Point::class,
         'delivery_location' => Point::class,
         'cargo' => DataCollection::class.':'.CargoData::class,
+        'pickup_date_from' => 'date',
+        'pickup_date_to' => 'date',
+        'delivery_date_from' => 'date',
+        'delivery_date_to' => 'date',
     ];
+
 
     protected $dispatchesEvents = [
         'deleted' => PostDeleted::class,
         'created' => PostCreated::class,
         'updated' => PostUpdated::class,
     ];
+
+    public function elasticSearchModel(): ElasticSearchModel
+    {
+        return new ElasticSearch\Post()->fillFromModel(
+            $this
+        );
+    }
 
     public function user(): ExternalRelation
     {
